@@ -28,7 +28,7 @@ def predict():
 
     output=round(prediction[0],2)
 
-    return render_template('homepage.html',predictions='The loan prediction is {}'.format(output))
+    return render_template('output.html',predictions='The loan prediction is {}'.format(output))
 
 
 @app.route('/results',methods=['POST'])

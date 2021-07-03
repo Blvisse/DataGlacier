@@ -1,6 +1,6 @@
 """
 
-simple rndom forest regressor model to predict loan eligibility
+simple random forest regressor model to predict loan eligibility
 
 
 """
