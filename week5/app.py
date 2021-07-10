@@ -10,7 +10,7 @@ model=pickle.load(open('model.pkl','rb'))
 
 
 
-@app.route('/')
+@app.route('/time')
 
 def homepage():
     return render_template('homepage.html')
@@ -18,31 +18,36 @@ def homepage():
 
 
 
-@app.route('/predict/')
+@app.route('/',  methods=['GET', 'POST'])
 
 def predict():
     import pandas as pd
 
-    gender=request.args.get('Gender')
-    married=request.args.get('Married')
-    dependents=request.args.get('Dependents')
-    education=request.args.get('Education')
-    self_employed=request.args.get('Self_Employed')
-    applicantIncome=request.args.get('ApplicantIncome')
-    coapplicantIncome=request.args.get('CoapplicantIncome')
-    loanAmount= request.args.get('LoanAmount')
-    loanamountTerm=request.args.get('Loan_Amount_Term')   
-    creditHistory=request.args.get('Credit_History')    
-    propertyArea =request.args.get('Property_Area')
+    # gender=request.args.get('Gender')
+    # married=request.args.get('Married')
+    # dependents=request.args.get('Dependents')
+    # education=request.args.get('Education')
+    # self_employed=request.args.get('Self_Employed')
+    # applicantIncome=request.args.get('ApplicantIncome')
+    # coapplicantIncome=request.args.get('CoapplicantIncome')
+    # loanAmount= request.args.get('LoanAmount')
+    # loanamountTerm=request.args.get('Loan_Amount_Term')   
+    # creditHistory=request.args.get('Credit_History')    
+    # propertyArea =request.args.get('Property_Area')
     
-    data=pd.DataFrame({'Gender':[gender],'Married':[married],'Dependents':[dependents],'Education':[education],'Self_Employed':[self_employed],'ApplicantIncome':[applicantIncome],'CoapplicantIncome':[coapplicantIncome],'LoanAmount':[loanAmount],'Loan_Amount_Term':[loanamountTerm],'Credit_History':[creditHistory],'Property_Area':[propertyArea],})
+    data=request.get_json(force=True)
+    data.update((X,[y])for X,y in data.items())
+    data_DF=pd.DataFrame.from_dict(data)
+
+
+    # data=pd.DataFrame({'Gender':[gender],'Married':[married],'Dependents':[dependents],'Education':[education],'Self_Employed':[self_employed],'ApplicantIncome':[applicantIncome],'CoapplicantIncome':[coapplicantIncome],'LoanAmount':[loanAmount],'Loan_Amount_Term':[loanamountTerm],'Credit_History':[creditHistory],'Property_Area':[propertyArea],})
     # data.fillna(0, inplace=True)
-    print(data)
-    prediction=model.predict(data)
+    print(data_DF)
+    prediction=model.predict(data_DF)
 
-    
+    output={'results':int(prediction[0])}
 
-    return jsonify({'Loan Prediction':str(prediction)}) 
+    return jsonify(results=output) 
     # return dependents
 
 @app.route('/results',methods=['POST'])
